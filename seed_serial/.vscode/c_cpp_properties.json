@@ -1,0 +1,24 @@
+{
+    "configurations": [
+        {
+            "browse": {
+                "databaseFilename": "",
+                "limitSymbolsToIncludedHeaders": true
+            },
+            "includePath": [
+                "/opt/ros/kinetic/include/**",
+                "/home/fyw/openarm_ros/ws_moveit/devel/include/**",
+                "/home/fyw/openarm_ros/ws_moveit/src/rosserial/rosserial_server/include/**",
+                "/home/fyw/openarm_ros/ws_moveit/src/rosserial/rosserial_test/include/**",
+                "/home/fyw/openarm_ros/ws_moveit/src/seed_serial/include/**",
+                "/usr/include/**"
+            ],
+            "name": "ROS",
+            "intelliSenseMode": "gcc-x64",
+            "compilerPath": "/usr/bin/gcc",
+            "cStandard": "c11",
+            "cppStandard": "c++17"
+        }
+    ],
+    "version": 4
+}
