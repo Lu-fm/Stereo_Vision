@@ -5,11 +5,9 @@ union numByte
 {
     float num;
     uint8_t byte[4];
-    numByte();
     numByte(float data)
-    {
-        num = data;
-    }
+    :num(data)
+    { }
 };
 
 struct joint_cmd
@@ -23,20 +21,8 @@ struct joint_cmd
     numByte speed;
     numByte claw;
 
-    joint_cmd(float a1,float a2,float a3,float a4,float a5,float a6,float sp, float cw)
+    joint_cmd(float a1, float a2, float a3, float a4, float a5, float a6, float sp, float cw)
+     : angle1(a1), angle2(a2), angle3(a3), angle4(a4), angle5(a5), angle6(a6), speed(sp), claw(cw)
     {
-        angle1.num = a1;
-        angle2.num = a2;
-        angle3.num = a3;
-        angle4.num = a4;
-        angle5.num = a5;
-        angle6.num = a6;
-        speed.num = sp;
-        claw.num = cw;
-    };
-
+    }
 };
-
-
-
-

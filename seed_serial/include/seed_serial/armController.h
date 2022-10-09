@@ -23,9 +23,9 @@ public:
 private:
     void serialInit();
     void readMsg(joint_cmd &msg);
-    size_t sendMsg(joint_cmd &msg);
+    void sendMsg(joint_cmd &msg);
     serial::Serial sp;
-    joint_cmd jcmd = {1,2,3,4,5,6,7,8};
+    joint_cmd jcmd = {0,0,0,0,0,0,0,0};
     uint8_t data[MSG_LENGTH];
 };
 

@@ -15,7 +15,6 @@ void armController::serialInit()
     sp.setPort("/dev/ttyUSB0");                                   //设置要打开的串口名称
     sp.setBaudrate(9600);                                         //设置串口通信的波特率
     sp.setTimeout(timeout);   
-    // joint_cmd jcmd_1(1,2,3,4,5,6,7,8);
     try
     {
         sp.open(); //打开串口
@@ -34,7 +33,7 @@ void armController::readMsg(joint_cmd &msg){
     // to do
 };
 
-size_t armController::sendMsg(joint_cmd &msg)
+void armController::sendMsg(joint_cmd &msg)
 {
     data[0] = 0xee;
     data[1] = '3';
@@ -49,7 +48,8 @@ size_t armController::sendMsg(joint_cmd &msg)
     trans(numByte(0.0), &(data[39]));
     trans(msg.speed, &(data[43]));
     data[47] = 0xef;
-    sp.write(data, MSG_LENGTH);
+    size_t length = sp.write(data, MSG_LENGTH);
+    
 };
 
 void armController::moveToCart(Eigen::Matrix<double, 4, 4> goal, double joint_speed, double claw){
@@ -81,6 +81,11 @@ void armController::moveToJoint(double *joint_angle, double joint_speed, double 
     jcmd.claw = claw;
     sendMsg(jcmd);
 };
+
+void home()
+{
+    
+}
 
 void trans(numByte msg, uint8_t *data)
 {
