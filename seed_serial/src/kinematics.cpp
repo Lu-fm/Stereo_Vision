@@ -122,12 +122,12 @@ bool Kinematics::do_inverse_kin(Eigen::Matrix<double, 4, 4> eef, Eigen::Matrix<d
               << T4_6 << std::endl;
 
     solu[4] = atan2(sqrt(pow(T4_6(2, 0), 2) + pow(T4_6(2, 1), 2)), T4_6(2, 2));
-    if (abs(solu[4] - M_PI) < 0.1)
+    if (abs(solu[4] - M_PI) < 0.01)
     {
         solu[3] = 0;
         solu[5] = atan2(T4_6(0, 1), -T4_6(0, 0));
     }
-    else if (abs(solu[4]) < 0.1)
+    else if (abs(solu[4]) < 0.01)
     {
         solu[3] = 0;
         solu[5] = atan2(-T4_6(0, 1), T4_6(0, 0));

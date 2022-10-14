@@ -39,13 +39,14 @@ include_directories(
 add_library(kinematics
 include/seed_serial/kinematics.h
 src/kinematics.cpp
+src/armController.cpp
 )
 
 
 add_executable(${PROJECT_NAME}_node src/seed_serial.cpp src/order.cpp src/state.cpp)
 
-add_executable(arm_node src/armController.cpp)
-target_link_libraries(arm_node kinematics ${catkin_LIBRARIES})
+add_executable(task src/task.cpp)
+target_link_libraries(task kinematics ${catkin_LIBRARIES})
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
