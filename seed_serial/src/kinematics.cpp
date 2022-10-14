@@ -117,32 +117,57 @@ bool Kinematics::do_inverse_kin(Eigen::Matrix<double, 4, 4> eef, Eigen::Matrix<d
     solud = solu * 180 / M_PI;
     set_cur_angle(solud);
 
-    T4_6 = (T0_1 * T1_2 * T2_3 * T3_4 * T4_5 * T5_6).inverse() * T0_6;
+    T4_6 = (T0_1 * T1_2 * T2_3).inverse() * T0_6;
+
     std::cout << "T4_6:\n"
               << T4_6 << std::endl;
 
-    solu[4] = atan2(sqrt(pow(T4_6(2, 0), 2) + pow(T4_6(2, 1), 2)), T4_6(2, 2));
-    if (abs(solu[4] - M_PI) < 0.01)
+    // solution using T0_3^-1 * T0_6 directly
+    solu[4] = acos(T4_6(1, 2));
+    if (abs(solu[4]) < 1e-4)
     {
+        std::cout<<"Zero! "<<solu[4];
+        solu[3] = 0;
+        solu[5] = -atan2(T4_6(0, 1), T4_6(0, 0));
+    }
+    else if (abs(solu[4] - M_PI) < 1e-4 || abs(solu[4] + M_PI) < 1e-4)
+    {
+        std::cout<<"pm M_PI! "<< solu;
         solu[3] = 0;
         solu[5] = atan2(T4_6(0, 1), -T4_6(0, 0));
     }
-    else if (abs(solu[4]) < 0.01)
-    {
-        solu[3] = 0;
-        solu[5] = atan2(-T4_6(0, 1), T4_6(0, 0));
-    }
     else
     {
-        solu[3] = atan2(T4_6(1, 2) / sin(solu[4]), T4_6(0, 2) / sin(solu[4]));
-        solu[5] = atan2(T4_6(2, 1) / sin(solu[4]), -T4_6(2, 0) / sin(solu[4]));
+        solu[3] = atan2(-T4_6(2, 2) / sin(solu[4]), -T4_6(0, 2) / sin(solu[4]));
+        solu[5] = atan2(-T4_6(1, 1) / sin(solu[4]), T4_6(1, 0) / sin(solu[4]));
     }
+    // ------------------
 
-    solu[3] = -solu[3];
-    solu[4] = -solu[4];
+    //// euler ZYZ solution, with this solution, T4_6 shuold be:
+    // T4_6 = (T0_1 * T1_2 * T2_3 * T3_4 * T4_5 * T5_6).inverse() * T0_6;
+    //// and the angle[3] and angle[5] will jump to pm 180\deg.
 
-    solu[4] += M_PI / 2; // specially for our robot
-    solu[2] += 110 * M_PI / 180;
+    // solu[4] = atan2(sqrt(pow(T4_6(2, 0), 2) + pow(T4_6(2, 1), 2)), T4_6(2, 2));
+    // if (abs(solu[4] - M_PI) < 0.01)
+    // {
+    //     solu[3] = 0;
+    //     solu[5] = atan2(T4_6(0, 1), -T4_6(0, 0));
+    // }
+    // else if (abs(solu[4]) < 0.01)
+    // {
+    //     solu[3] = 0;
+    //     solu[5] = atan2(-T4_6(0, 1), T4_6(0, 0));
+    // }
+    // else
+    // {
+    //     solu[3] = atan2(T4_6(1, 2) / sin(solu[4]), T4_6(0, 2) / sin(solu[4]));
+    //     solu[5] = atan2(T4_6(2, 1) / sin(solu[4]), -T4_6(2, 0) / sin(solu[4]));
+    // }
+
+    // solu[3] = -solu[3];
+    // solu[4] = -solu[4];
+    // --------------------
+
     for (int i = 0; i < solu.size(); i++)
     {
         if (isnan(solu[i]))
@@ -152,7 +177,12 @@ bool Kinematics::do_inverse_kin(Eigen::Matrix<double, 4, 4> eef, Eigen::Matrix<d
         }
         if (solu[i] > M_PI)
             solu[i] = 2 * M_PI - solu[i];
+        else if (solu[i] < -M_PI)
+            solu[i] = 2 * M_PI + solu[i];
     }
+
+    solu[4] += M_PI / 2; // specially for our robot
+    solu[2] += 110 * M_PI / 180;
     return true;
 }
 
@@ -204,7 +234,7 @@ int main(int argc, char **argv)
     Eigen::Matrix<double, 4, 4> home;
     home.setIdentity();
     home.block<3, 1>(0, 3) << 325, 0, 421;
-    joints << 5, 74.5, 96.0, 0.0, 90.0, 90.0;
+    joints << 5, 74.5, 96.0, 0.0, 90, 40;
     home_joints << 0, -18, 79, 0, 30, 0; // home
     // Board Origin
     // eulerZ(90)Y(0)X(180), pos:277, -280, 25
@@ -213,25 +243,29 @@ int main(int argc, char **argv)
         0, 0, 1, -20,
         0, 0, 0, 1;
 
-    euler << 0,0,60;
+    euler << 0, -90, 0;
     eulerZYX2matrix(euler, eef);
-    eef.block<3,1>(0,3) << 300, 50, -20;
+    eef.block<3, 1>(0, 3) << 340, 0, 400;
 
     // arm.do_forward_kin(home_joints * 180 / M_PI, home);
     // std::cout << "home:\n"
     //           << home << std::endl
     //           << "------" << std::endl;
 
+    arm.do_forward_kin(joints, eef);
+
+    std::cout << "joints_given"
+              << joints << "\n eef_given:\n"
+              << eef << std::endl
+              << "------" << std::endl;
+
     arm.do_inverse_kin(eef, solu);
     std::cout << "solu: \n"
               << solu * 180 / M_PI << std::endl
               << "------" << std::endl;
 
-    std::cout << "eef:\n"
-              << eef << std::endl
-              << "------" << std::endl;
-    solu[3] = 0;
-    solu[5] = euler[2]*M_PI/180 - solu[0];
+    // solu[3] = 0;
+    // solu[5] = euler[2]*M_PI/180 - solu[0];
     arm.do_forward_kin(solu * 180 / M_PI, eef_solu);
 
     std::cout << "eef_solu:\n"

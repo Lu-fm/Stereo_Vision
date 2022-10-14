@@ -48,6 +48,9 @@ add_executable(${PROJECT_NAME}_node src/seed_serial.cpp src/order.cpp src/state.
 add_executable(task src/task.cpp)
 target_link_libraries(task kinematics ${catkin_LIBRARIES})
 
+add_executable(kine src/kinematics.cpp)
+target_link_libraries(task  ${catkin_LIBRARIES})
+
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
 ## target back to the shorter version for ease of user use
