@@ -12,16 +12,32 @@ find_package(catkin REQUIRED COMPONENTS
   serial
   std_msgs
   geometry_msgs
+  message_generation
+
 )
 
 find_package(Eigen3 REQUIRED)
 
+add_service_files(
+  FILES
+  cartHorizon.srv
+  )
+
+generate_messages(
+  DEPENDENCIES
+  std_msgs
+)
+
+
 catkin_package(
    INCLUDE_DIRS include
    LIBRARIES seed_serial
+   CATKIN_DEPENDS message_runtime
 #  CATKIN_DEPENDS roscpp serial
 #  DEPENDS system_lib
 )
+
+
 
 ###########
 ## Build ##
@@ -39,31 +55,14 @@ include_directories(
 add_library(kinematics
 include/seed_serial/kinematics.h
 src/kinematics.cpp
-src/armController.cpp
+src/arm_controller.cpp
 )
 
 
-add_executable(${PROJECT_NAME}_node src/seed_serial.cpp src/order.cpp src/state.cpp)
 
 add_executable(task src/task.cpp)
 target_link_libraries(task kinematics ${catkin_LIBRARIES})
 
 add_executable(kine src/kinematics.cpp)
 target_link_libraries(task  ${catkin_LIBRARIES})
-
-## Rename C++ executable without prefix
-## The above recommended prefix causes long target names, the following renames the
-## target back to the shorter version for ease of user use
-## e.g. "rosrun someones_pkg node" instead of "rosrun someones_pkg someones_pkg_node"
-# set_target_properties(${PROJECT_NAME}_node PROPERTIES OUTPUT_NAME node PREFIX "")
-
-## Add cmake target dependencies of the executable
-## same as for the library above
-add_dependencies(${PROJECT_NAME}_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-
-## Specify libraries to link a library or executable target against
-target_link_libraries(${PROJECT_NAME}_node
-  ${catkin_LIBRARIES}
-)
-
 

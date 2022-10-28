@@ -1,3 +1,13 @@
+/**
+ * @file kinematics.h
+ * @author Fangmin Lu (lufangmin@zju.edu.cn)
+ * @brief The forward and inverse kinematics implementation for a 6-DOF robot arm
+ * @version 0.2
+ * @date 2022-10-28
+ * 
+ * @copyright Copyright (c) 2022
+ * 
+ */
 #pragma once
 #include <ros/ros.h>
 #include <ros/console.h>

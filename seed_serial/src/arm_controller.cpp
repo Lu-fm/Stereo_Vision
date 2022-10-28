@@ -1,11 +1,12 @@
-#include "seed_serial/armController.h"
+#include "seed_serial/arm_controller.h"
 
 armController::armController()
 {
     serialInit();
 };
 
-armController::~armController(){
+armController::~armController()
+{
     sp.close();
 };
 
@@ -14,7 +15,7 @@ void armController::serialInit()
     serial::Timeout timeout = serial::Timeout::simpleTimeout(10); //创建timeout
     sp.setPort("/dev/ttyUSB0");                                   //设置要打开的串口名称
     sp.setBaudrate(9600);                                         //设置串口通信的波特率
-    sp.setTimeout(timeout);   
+    sp.setTimeout(timeout);
     try
     {
         sp.open(); //打开串口
@@ -49,31 +50,28 @@ void armController::sendMsg(joint_cmd &msg)
     trans(msg.speed, &(data[43]));
     data[47] = 0xef;
     size_t length = sp.write(data, MSG_LENGTH);
-    
 };
 
 void armController::moveToCart(Eigen::Matrix<double, 4, 4> goal, double joint_speed, double claw)
 {
-    Eigen::Matrix<double,6,1> solu;
-    ROS_INFO_STREAM("Target:\n"<<goal);
+    Eigen::Matrix<double, 6, 1> solu;
+    ROS_INFO_STREAM("Target:\n"
+                    << goal);
     bool has_solu = arm_kin.do_inverse_kin(goal, solu);
-    if(!has_solu)
+    if (!has_solu)
     {
         ROS_WARN("Inverse Solution NOT FOUND!\n");
         return;
     }
     double solu_deg[6];
     // ROS_INFO_STREAM("The solution:\n");
-    for(int i = 0; i < 6; i++)
+    for (int i = 0; i < 6; i++)
     {
-        solu_deg[i] = solu[i]*180/M_PI;
-        // std::cout<<solu_deg[i]<<std::endl;
+        solu_deg[i] = solu[i] * 180 / M_PI;
+        std::cout << solu_deg[i] << std::endl;
     }
-    moveToJoint(solu_deg,joint_speed,claw);
-    
-
+    moveToJoint(solu_deg, joint_speed, claw);
 };
-
 
 void armController::moveToCart(double *pose, double joint_speed, double claw)
 {
@@ -85,21 +83,22 @@ void armController::moveToCart(double *pose, double joint_speed, double claw)
     euler << pose[3], pose[4], pose[5];
     eulerZYX2matrix(euler, target);
     target.block<3, 1>(0, 3) << pose[0], pose[1], pose[2];
-    ROS_INFO_STREAM("euler:\n"<<euler);
-    ROS_INFO_STREAM("Target:\n"<<target);
+    ROS_INFO_STREAM("euler:\n"
+                    << euler);
+    ROS_INFO_STREAM("Target:\n"
+                    << target);
     arm_kin.do_inverse_kin(target, solu);
-    for(int i = 0; i < 6; i++)
-    { 
-       solu_deg[i] = solu[i] * 180/M_PI;  
-       std::cout<<"Solu Deg: "<<solu_deg[i]<<"\n";
+    for (int i = 0; i < 6; i++)
+    {
+        solu_deg[i] = solu[i] * 180 / M_PI;
+        std::cout << "Solu Deg: " << solu_deg[i] << "\n";
     }
-    if(abs(solu_deg[3]) > 3)
+    if (abs(solu_deg[3]) > 3)
     {
         ROS_WARN("Singularity occurs, plz choose another pose");
         return;
     }
-    // moveToJoint(solu_deg, joint_speed, claw);
-
+    moveToJoint(solu_deg, joint_speed, claw);
 };
 
 void armController::moveToJoint(double *joint_angle, double joint_speed, double claw)
@@ -128,19 +127,19 @@ void armController::moveToJoint(double *joint_angle, double joint_speed, double 
     sendMsg(jcmd);
 };
 
-void armController::home()
-{
-    
+void armController::home(){
+
 };
 
 void armController::forward_kin(double *angles, Eigen::Matrix<double, 4, 4> &pose)
 {
     Eigen::Matrix<double, 6, 1> joint_angles;
-    for(int i = 0; i < 6; i++)
+    for (int i = 0; i < 6; i++)
         joint_angles[i] = angles[i];
     arm_kin.set_cur_angle(joint_angles);
     arm_kin.do_forward_kin(joint_angles, pose);
 };
+
 
 void trans(numByte msg, uint8_t *data)
 {

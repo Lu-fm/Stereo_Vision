@@ -1,3 +1,13 @@
+/**
+ * @file kinematics.cpp
+ * @author Fangmin Lu (lufangmin@zju.edu.cn)
+ * @brief The forward and inverse kinematics implementation for a 6-DOF robot arm
+ * @version 0.2
+ * @date 2022-10-28
+ * 
+ * @copyright Copyright (c) 2022
+ * 
+ */
 #include "seed_serial/kinematics.h"
 
 Kinematics::Kinematics()
@@ -126,7 +136,7 @@ bool Kinematics::do_inverse_kin(Eigen::Matrix<double, 4, 4> eef, Eigen::Matrix<d
     solu[4] = acos(T4_6(1, 2));
     if (abs(solu[4]) < 1e-4)
     {
-        std::cout<<"Zero! "<<solu[4];
+        std::cout<<"angle 5 is Zero!\n ";
         solu[3] = 0;
         solu[5] = -atan2(T4_6(0, 1), T4_6(0, 0));
     }
@@ -197,12 +207,6 @@ void eulerZYX2matrix(Eigen::Matrix<double, 3, 1> euler, Eigen::Matrix<double, 4,
     rot.block<3, 3>(0, 0) << cos(a) * cos(b), cos(a) * sin(b) * sin(g) - sin(a) * cos(g), cos(a) * sin(b) * cos(g) + sin(a) * sin(g),
         sin(a) * cos(b), sin(a) * sin(b) * sin(g) + cos(a) * cos(g), sin(a) * sin(b) * cos(g) - cos(a) * sin(g),
         -sin(b), cos(b) * sin(g), cos(b) * cos(g);
-    // for (int i = 0; i < rot.rows(); i++)
-    // {
-    //     for (int j = 0; j < rot.cols(); j++)
-    //         if (abs(rot(i, j)) < EPSILON)
-    //             rot(i, j) = 0;
-    // }
 }
 
 void matrix2eulerZYX(Eigen::Matrix<double, 4, 4> rot, Eigen::Matrix<double, 3, 1> &eulerZYX)
@@ -252,12 +256,12 @@ int main(int argc, char **argv)
     //           << home << std::endl
     //           << "------" << std::endl;
 
-    arm.do_forward_kin(joints, eef);
+    // arm.do_forward_kin(joints, eef);
 
-    std::cout << "joints_given"
-              << joints << "\n eef_given:\n"
-              << eef << std::endl
-              << "------" << std::endl;
+    // std::cout << "joints_given\n"
+    //           << joints << "\n eef_given:\n"
+    //           << eef << std::endl
+    //           << "------" << std::endl;
 
     arm.do_inverse_kin(eef, solu);
     std::cout << "solu: \n"

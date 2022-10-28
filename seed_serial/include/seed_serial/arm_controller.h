@@ -1,13 +1,25 @@
+/**
+ * @file arm_controller.h
+ * @author Fangmin Lu (lufangmin@zju.edu.cn)
+ * @brief This is the class of arm controller.
+ * @version 0.1
+ * @date 2022-10-28
+ * 
+ * @copyright Copyright (c) 2022
+ * 
+ */
 #pragma once
 
 // ros
 #include <ros/ros.h>
 #include <ros/console.h>
+#include "seed_serial/cartHorizon.h"
 
 // serial
 #include <serial/serial.h>
 #include "command.h"
 #define MSG_LENGTH 48
+
 // kinematics
 #include "kinematics.h"
 
