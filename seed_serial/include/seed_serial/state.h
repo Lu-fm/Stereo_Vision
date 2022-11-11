@@ -8,7 +8,7 @@ struct position_msg
     int16_t y;
     int16_t z;
     position_msg();
-    position_msg(int16_t x_,int16_t y_,int16_t z_);
+    position_msg(int16_t x_, int16_t y_,int16_t z_);
 };
 
 class state
@@ -26,12 +26,13 @@ public:
         state_info4=102,
         state_info5=103,
     }back_info_type;
-    void recieve(serial::Serial &sp,back_info_type type);
+    void recieve(serial::Serial *sp,back_info_type type);
     void get_position(position_msg &msg);
     void trans(int16_t &value,uint8_t a[]);
 
 private:
     uint8_t state[9];
+    
 };
 
 #endif
