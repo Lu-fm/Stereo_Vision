@@ -34,6 +34,7 @@ public:
     void moveToJoint(double *joints_cmd, double joint_speed, double claw);
     void forward_kin(double *angles, Eigen::Matrix<double, 4, 4> &pose);
     void home();
+    serial::Serial *get_serial();
 
 private:
     void serialInit();

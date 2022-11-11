@@ -14,14 +14,16 @@ position_msg::position_msg(int16_t x_,int16_t y_,int16_t z_)
 }
 void state::recieve(serial::Serial &sp,back_info_type type)
 {
-    while(true)
+    // while(true)
     {
         size_t num = sp.available();
         if(num!=0)
         {
             num = sp.read(state, num);
+            std::cout<<"number of byte: "<< num;
             if(state[0]==0xce && state[8]==0xcf && state[7]==type)
-                break;
+                // break;
+                std::cout<<"GET STATE";
         }
     }
 

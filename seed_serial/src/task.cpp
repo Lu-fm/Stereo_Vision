@@ -1,14 +1,23 @@
 #include"seed_serial/arm_controller.h"
+#include"seed_serial/state.h"
+#define UPDATE_RATE 10
 armController arm;
+position_msg cur_pose;
+state armstate;
 
 bool arm_server(seed_serial::cartHorizon::Request &request,
                                seed_serial::cartHorizon::Response &response);
+
+void updatePos(const ros::TimerEvent &event);
+
 
 int main(int argc, char **argv)
 {
     ros::init(argc, argv, "arm_test");
     ros::NodeHandle nh;
     ros::ServiceServer service = nh.advertiseService("arm/pose", arm_server);
+    ros::Timer timer = nh.createTimer(ros::Duration(1), updatePos);
+    // timer.start();
 
     Eigen::Matrix<double, 4, 4> pose;
     double theta = 0;
@@ -47,4 +56,13 @@ bool arm_server(seed_serial::cartHorizon::Request &request,
     ROS_INFO_STREAM("Go to pose: \n"<< target);
     response.isSuccess = true;
     return true;
-};
+}
+
+void updatePos(const ros::TimerEvent &event)
+{
+    // ROS_INFO("OK");
+    armstate.recieve(*arm.get_serial(), state::coordinate_value);
+    // armstate.get_position(cur_pose);
+    // std::cout<<cur_pose.x<<"\n"<<cur_pose.y<<"\n"<<cur_pose.z<<"-------\n";
+
+}

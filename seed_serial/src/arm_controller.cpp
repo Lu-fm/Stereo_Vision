@@ -10,6 +10,15 @@ armController::~armController()
     sp.close();
 };
 
+serial::Serial * armController::get_serial()
+{
+    if(sp.isOpen())
+        return &sp;
+    else
+        ROS_INFO("Serial Port is NOT Open");
+}
+
+
 void armController::serialInit()
 {
     serial::Timeout timeout = serial::Timeout::simpleTimeout(10); //创建timeout

@@ -56,6 +56,7 @@ add_library(kinematics
 include/seed_serial/kinematics.h
 src/kinematics.cpp
 src/arm_controller.cpp
+src/state.cpp
 )
 
 
