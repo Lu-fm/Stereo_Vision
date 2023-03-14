@@ -1,4 +1,5 @@
 #include "seed_serial/arm_controller.h"
+#include "seed_serial/state.h"
 
 armController::armController()
 {
@@ -55,7 +56,7 @@ void armController::sendMsg(joint_cmd &msg)
     trans(msg.angle5, &(data[19]));
     trans(msg.angle6, &(data[23]));
     trans(msg.claw, &(data[27]));
-    trans(numByte(0.0), &(data[39]));
+    trans(bnf32(0.0), &(data[39]));
     trans(msg.speed, &(data[43]));
     data[47] = 0xef;
     size_t length = sp.write(data, MSG_LENGTH);
@@ -150,7 +151,7 @@ void armController::forward_kin(double *angles, Eigen::Matrix<double, 4, 4> &pos
 };
 
 
-void trans(numByte msg, uint8_t *data)
+void trans(bnf32 msg, uint8_t *data)
 {
     for (int i = 0; i < 4; i++)
         data[i] = msg.byte[i];

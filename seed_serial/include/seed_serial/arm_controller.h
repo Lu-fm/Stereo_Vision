@@ -45,6 +45,7 @@ private:
     joint_cmd jcmd = {0,0,0,0,0,0,0,0};
     uint8_t data[MSG_LENGTH];
 
+
 };
 
-void trans(numByte msg, uint8_t *data);
+void trans(bnf32 msg, uint8_t *data);

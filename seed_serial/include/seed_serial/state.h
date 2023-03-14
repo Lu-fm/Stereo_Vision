@@ -11,6 +11,17 @@ struct position_msg
     position_msg(int16_t x_,int16_t y_,int16_t z_);
 };
 
+struct angle_msg
+{
+    int16_t angle1;
+    int16_t angle2;
+    int16_t angle3;    
+    int16_t angle4;
+    int16_t angle5;
+    int16_t angle6;
+    angle_msg();
+};
+
 class state
 {
 public:
@@ -26,12 +37,18 @@ public:
         state_info4=102,
         state_info5=103,
     }back_info_type;
-    void recieve(serial::Serial &sp,back_info_type type);
-    void get_position(position_msg &msg);
+    bool recieve(serial::Serial &sp,back_info_type type);
+    void get_cart_pos(position_msg &msg);
+    void get_joint_pos();
     void trans(int16_t &value,uint8_t a[]);
+    float joint_pos[6];
+    float cart_pos[3];
+    ros::Publisher jointPub;
 
 private:
-    uint8_t state[9];
+    uint8_t value[9];
+    int16_t tempdata;
+    int jointFlag = 0;
 };
 
 #endif

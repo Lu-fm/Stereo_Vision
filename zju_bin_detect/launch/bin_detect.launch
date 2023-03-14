@@ -1,0 +1,23 @@
+<launch>
+  <arg name="model" default="$(find zju_bin_detect)/urdf/wpb_home.urdf"/>
+  <arg name="gui" default="true" />
+
+  <param name="robot_description" command="$(find xacro)/xacro -i $(arg model)" />
+  <param name="use_gui" value="$(arg gui)"/>
+
+  <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" >
+    <rosparam command="load" file="$(find zju_bin_detect)/config/wpb_home.yaml" />
+  </node>
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
+
+  <!--- Run Kinect -->
+  <include file="$(find kinect2_bridge)/launch/kinect2_bridge.launch" />
+
+  <!-- bin_dim_node -->
+  <node name="bin_dim_node" pkg="zju_bin_detect" type="bin_dim_node" output="screen"/>
+
+  <!--- RViz  -->
+  <arg name="rvizconfig" default="$(find zju_bin_detect)/rviz/bin_detect.rviz" />
+  <node name="rviz" pkg="rviz" type="rviz" args="-d $(arg rvizconfig)" required="true" />
+
+</launch>
