@@ -73,7 +73,7 @@ void state::get_joint_pos()
     for(int i = 0; i < 3; i++)
     {
         trans(tempdata, value + 2*i + 1 );
-        int idx = (axis-1)*3 + i;
+    int idx = (axis-1)*3 + i;   
         joint_pos[idx] = tempdata;
         joint_pos[idx] /= (100*180/M_PI);
         if(idx == 4)

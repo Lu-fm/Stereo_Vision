@@ -1,6 +1,7 @@
 #include"seed_serial/arm_controller.h"
 #include"seed_serial/state.h"
 #include <sensor_msgs/JointState.h>
+#include <geometry_msgs/Pose.h>
 
 #define UPDATE_RATE 10
 armController arm;
@@ -13,6 +14,8 @@ bool arm_server(seed_serial::cartHorizon::Request &request,
 
 void updatePos(const ros::TimerEvent &event);
 void pubProcess(const ros::TimerEvent &event);
+void BoxPoseCB(const geometry_msgs::Pose::ConstPtr &msg);
+
 
 int main(int argc, char **argv)
 {
@@ -20,7 +23,8 @@ int main(int argc, char **argv)
     ros::NodeHandle nh;
     ros::ServiceServer service = nh.advertiseService("arm/pose", arm_server);
     armstate.jointPub = nh.advertise<sensor_msgs::JointState>("arm/joint_pos" , 1);
-
+    ros::Subscriber visionSub = nh.subscribe("/box/pose",10, BoxPoseCB);
+   
     ros::Timer timer = nh.createTimer(ros::Duration(0.01), updatePos);
     ros::Timer pubTimer = nh.createTimer(ros::Duration(0.1), pubProcess);
     idx = 0;
@@ -35,7 +39,7 @@ int main(int argc, char **argv)
     double joint_speed, claw;
     double x,y,z;
     x = 400;
-    y = 0;
+y = 0;
     z = 250;
     theta = atan2(y,x);
     pose<<  0,  -sin(theta), -cos(theta), x,
@@ -98,4 +102,16 @@ void pubProcess(const ros::TimerEvent &event)
             msg.position.push_back(armstate.joint_pos[i]);
         armstate.jointPub.publish(msg);
     }
+}
+
+void BoxPoseCB(const geometry_msgs::Pose::ConstPtr &msg)
+{
+    armstate.box_pose[0] = msg->position.x;
+    armstate.box_pose[1] = msg->position.y;
+    armstate.box_pose[2] = msg->position.z;
+    armstate.box_pose[3] = msg->orientation.x;
+    armstate.box_pose[4] = msg->orientation.y;
+    armstate.box_pose[5] = msg->orientation.z;
+    armstate.box_pose[6] = msg->orientation.w;
+    
 }

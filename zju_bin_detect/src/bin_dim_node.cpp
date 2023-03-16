@@ -101,7 +101,7 @@ static float grab_x_offset = 0.02;         //抓取过程中，向前抓取物�
 
 static float place_face_dist = 1.1;    //放置的对准距离比抓取的远从(改这个没用，wpr1_agent传过来）
 static float place_x_offset = -0.0;    //放置距离的修正量
-static float place_color_z = 0.1;       //放置高度的修正值(改这个没用，wpr1_agent传过来)
+static float place_color_z = 0.1;      //放置高度的修正值(改这个没用，wpr1_agent传过来)
 
 static visualization_msgs::Marker line_box;
 static visualization_msgs::Marker line_rack;

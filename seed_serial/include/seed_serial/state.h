@@ -43,12 +43,12 @@ public:
     void trans(int16_t &value,uint8_t a[]);
     float joint_pos[6];
     float cart_pos[3];
+    int jointFlag = 0;
+    float box_pose[6]; // x, y, z, r, p, y
     ros::Publisher jointPub;
-
 private:
     uint8_t value[9];
     int16_t tempdata;
-    int jointFlag = 0;
 };
 
 #endif
