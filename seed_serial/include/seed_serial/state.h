@@ -8,7 +8,7 @@ struct position_msg
     int16_t y;
     int16_t z;
     position_msg();
-    position_msg(int16_t x_,int16_t y_,int16_t z_);
+    position_msg(int16_t x_, int16_t y_,int16_t z_);
 };
 
 struct angle_msg

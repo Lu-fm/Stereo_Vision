@@ -40,7 +40,7 @@ private:
     void serialInit();
     void readMsg(joint_cmd &msg);
     void sendMsg(joint_cmd &msg);
-    serial::Serial sp;
+    serial::Serial *sp;
     Kinematics arm_kin;
     joint_cmd jcmd = {0,0,0,0,0,0,0,0};
     uint8_t data[MSG_LENGTH];

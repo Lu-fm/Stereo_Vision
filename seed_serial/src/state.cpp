@@ -1,6 +1,6 @@
 #include <ros/ros.h>
 #include <seed_serial/state.h>
- position_msg::position_msg()
+position_msg::position_msg()
  {
     x=0;
     y=0;
@@ -12,9 +12,13 @@ position_msg::position_msg(int16_t x_,int16_t y_,int16_t z_)
     y=y_;
     z=z_;
 }
+<<<<<<< HEAD
 
 
 bool state::recieve(serial::Serial &sp,back_info_type type)
+=======
+void state::recieve(serial::Serial *sp, back_info_type type)
+>>>>>>> d0c3261bb09ca19b6611bcd9bc3da12214509347
 {
     
     size_t num = 9;
@@ -26,6 +30,7 @@ bool state::recieve(serial::Serial &sp,back_info_type type)
 
     if(value[0]==0xce && value[8]==0xcf)
     {
+<<<<<<< HEAD
         // std::cout<<"number of byte: "<< num <<"\n";
         if(value[7]==state::coordinate_value)
         {   
@@ -46,6 +51,14 @@ bool state::recieve(serial::Serial &sp,back_info_type type)
             jointFlag = 2;
             get_joint_pos();
             doUpdate = true;
+=======
+        size_t num = sp->available();
+        if(num!=0)
+        {
+            num = sp->read(state, num);
+            if(state[0]==0xce && state[8]==0xcf && state[7]==type)
+                break;
+>>>>>>> d0c3261bb09ca19b6611bcd9bc3da12214509347
         }
     }
     return doUpdate;

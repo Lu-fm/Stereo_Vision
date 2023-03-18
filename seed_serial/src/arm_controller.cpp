@@ -8,7 +8,7 @@ armController::armController()
 
 armController::~armController()
 {
-    sp.close();
+    sp->close();
 };
 
 serial::Serial * armController::get_serial()
@@ -23,18 +23,18 @@ serial::Serial * armController::get_serial()
 void armController::serialInit()
 {
     serial::Timeout timeout = serial::Timeout::simpleTimeout(10); //创建timeout
-    sp.setPort("/dev/ttyUSB0");                                   //设置要打开的串口名称
-    sp.setBaudrate(9600);                                         //设置串口通信的波特率
-    sp.setTimeout(timeout);
+    sp->setPort("/dev/ttyUSB0");                                   //设置要打开的串口名称
+    sp->setBaudrate(9600);                                         //设置串口通信的波特率
+    sp->setTimeout(timeout);
     try
     {
-        sp.open(); //打开串口
+        sp->open(); //打开串口
     }
     catch (serial::IOException &e)
     {
         ROS_ERROR_STREAM("Unable to open port.");
     }
-    if (sp.isOpen()) //判断串口是否打开成功
+    if (sp->isOpen()) //判断串口是否打开成功
         ROS_INFO_STREAM("The serial port is opened.");
     else
         ROS_INFO_STREAM("The serial port is not opened.");
@@ -59,7 +59,7 @@ void armController::sendMsg(joint_cmd &msg)
     trans(bnf32(0.0), &(data[39]));
     trans(msg.speed, &(data[43]));
     data[47] = 0xef;
-    size_t length = sp.write(data, MSG_LENGTH);
+    size_t length = sp->write(data, MSG_LENGTH);
 };
 
 void armController::moveToCart(Eigen::Matrix<double, 4, 4> goal, double joint_speed, double claw)
@@ -150,9 +150,11 @@ void armController::forward_kin(double *angles, Eigen::Matrix<double, 4, 4> &pos
     arm_kin.do_forward_kin(joint_angles, pose);
 };
 
+// END OF CLASS ARMCONTROLLER
 
 void trans(bnf32 msg, uint8_t *data)
 {
     for (int i = 0; i < 4; i++)
         data[i] = msg.byte[i];
 };
+

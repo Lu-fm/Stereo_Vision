@@ -1,4 +1,5 @@
 #include"seed_serial/arm_controller.h"
+<<<<<<< HEAD
 #include"seed_serial/state.h"
 #include <sensor_msgs/JointState.h>
 #include <geometry_msgs/Pose.h>
@@ -8,19 +9,32 @@ armController arm;
 position_msg cur_pose;
 state armstate;
 int idx;
+=======
+#include "seed_serial/state.h"
+#define UPDATE_RATE 10
+armController arm;
+state armstate;
+position_msg position;
+
+>>>>>>> d0c3261bb09ca19b6611bcd9bc3da12214509347
 
 bool arm_server(seed_serial::cartHorizon::Request &request,
                                seed_serial::cartHorizon::Response &response);
 
+<<<<<<< HEAD
 void updatePos(const ros::TimerEvent &event);
 void pubProcess(const ros::TimerEvent &event);
 void BoxPoseCB(const geometry_msgs::Pose::ConstPtr &msg);
 
+=======
+void stateUpdateCallback(const ros::TimerEvent &event);
+>>>>>>> d0c3261bb09ca19b6611bcd9bc3da12214509347
 
 int main(int argc, char **argv)
 {
     ros::init(argc, argv, "arm_test");
     ros::NodeHandle nh;
+<<<<<<< HEAD
     ros::ServiceServer service = nh.advertiseService("arm/pose", arm_server);
     armstate.jointPub = nh.advertise<sensor_msgs::JointState>("arm/joint_pos" , 1);
     ros::Subscriber visionSub = nh.subscribe("/box/pose",10, BoxPoseCB);
@@ -30,10 +44,15 @@ int main(int argc, char **argv)
     idx = 0;
     timer.start();
     pubTimer.start();
+=======
+    ros::ServiceServer service = nh.advertiseService("arm/cmd/pose", arm_server);
+    ros::Timer timer = nh.createTimer(ros::Duration(1/UPDATE_RATE), stateUpdateCallback);
+    timer.start();
+>>>>>>> d0c3261bb09ca19b6611bcd9bc3da12214509347
 
     Eigen::Matrix<double, 4, 4> pose;
     double theta = 0;
-    double pose_euler[6] = {400*cos(theta), 400*sin(theta), 400, 0, -90, 0};
+    double pose_euler[6] = {450, 0, 300, 0, 0, 0};
     double home[] = {-10, 30.33, 100.44, -0.5, 40.94, -83.41};
     double joint_cmd[] = {0, -3.27, 81.32, 0, 105, 0};
     double joint_speed, claw;
@@ -49,7 +68,12 @@ y = 0;
     
     joint_speed = 5;
     claw = 1000;
+<<<<<<< HEAD
     arm.moveToCart(pose, joint_speed, claw);
+=======
+    // arm.moveToJoint(home,joint_speed,claw);
+    // arm.moveToCart(pose_euler, joint_speed, claw);
+>>>>>>> d0c3261bb09ca19b6611bcd9bc3da12214509347
     // ROS_INFO_STREAM("Command has sent");
     ros::spin();
 }
